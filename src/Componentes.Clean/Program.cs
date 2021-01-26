@@ -145,14 +145,14 @@ namespace Compoentes.Clean
                     WriteConsole($"{ o }");
                 }
 
-                PSDataCollection<ErrorRecord> errors = powershell.Streams.Error;
-                if (errors != null && errors.Count > 0)
-                {
-                    foreach (ErrorRecord err in errors)
-                    {
-                        WriteConsole($"    error: { err }");
-                    }
-                }
+                //PSDataCollection<ErrorRecord> errors = powershell.Streams.Error;
+                //if (errors != null && errors.Count > 0)
+                //{
+                //    foreach (ErrorRecord err in errors)
+                //    {
+                //        WriteConsole($"    error: { err }");
+                //    }
+                //}
             }
 
             WriteConsole($"Create { name } successfully created!");
