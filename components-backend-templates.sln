@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Components.Clean", "src\Componentes.Clean\Components.Clean.csproj", "{8F6B987E-CBE9-4763-BEED-1DD66B1C0FA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Optsol", "src\Componentes.Clean\Optsol.csproj", "{8F6B987E-CBE9-4763-BEED-1DD66B1C0FA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

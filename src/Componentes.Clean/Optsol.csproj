@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Components.Clean</RootNamespace>
-    <AssemblyName>Components.Clean</AssemblyName>
+    <RootNamespace>Optsol</RootNamespace>
+    <AssemblyName>Optsol</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -12,6 +12,7 @@ using System.CommandLine.Rendering;
 using System.CommandLine.Rendering.Views;
 using System.Configuration;
 using System.Linq;
+using System.Management.Automation;
 
 namespace Compoentes.Clean
 {
@@ -120,7 +121,15 @@ namespace Compoentes.Clean
 
         private static void CreateProject(string name, string url)
         {
+            using (var powershell = PowerShell.Create())
+            {
+                powershell.AddScript($"mkdir { name }");
+                powershell.AddScript($"cd { name }");
+                powershell.AddScript($"git clone { url }");
+                var results = powershell.Invoke();
+            }
 
+            WriteConsole($"Create { name } successfully created!");
         }
 
         static Action NewLineConsole = () => Console.WriteLine("\n");
