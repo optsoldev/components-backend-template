@@ -8,9 +8,10 @@ namespace Components.Clean.Models
         public long Id { get; set; }
 
         [AliasAs("name")]
-        public string Description { get; set; }
+        public string Name { get; set; }
 
         [AliasAs("git_url")]
         public string Url { get; set; }
     }
 }
+    

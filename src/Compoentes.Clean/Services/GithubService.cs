@@ -2,6 +2,7 @@
 using Components.Clean.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Components.Clean.Services
 {
@@ -16,9 +17,12 @@ namespace Components.Clean.Services
         }
         public IEnumerable<GithubProject> GetAllProjects()
         {
-            return _githubClient.GetGithubProjects(_githubSetting.Users)
+            var projects = _githubClient
+                .GetGithubProjects(_githubSetting.Users)
                 .GetAwaiter()
                 .GetResult();
+
+            return projects.Where(project => _githubSetting.WhiteList.Contains(project.Name));
         }
     }
 }
