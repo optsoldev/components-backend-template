@@ -1,17 +1,13 @@
 ﻿using Refit;
 
-namespace Components.Clean.Models
+namespace Optsol.Models
 {
     public class GithubProject
     {
-        [AliasAs("id")]
-        public long Id { get; set; }
+        public long id { get; set; }
 
-        [AliasAs("name")]
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        [AliasAs("git_url")]
-        public string Url { get; set; }
+        public string clone_url { get; set; }
     }
 }
-    

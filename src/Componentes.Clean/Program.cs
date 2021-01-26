@@ -1,7 +1,7 @@
-﻿using Components.Clean.Clientes;
-using Components.Clean.Models;
-using Components.Clean.Services;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Optsol.Clientes;
+using Optsol.Models;
+using Optsol.Services;
 using Refit;
 using System;
 using System.Collections.Generic;
@@ -18,16 +18,17 @@ namespace Compoentes.Clean
 {
     class Program
     {
-
         private static ServiceProvider Provider;
         private static ConsoleRenderer ConsoleRenderer;
         private static InvocationContext InvocationContext;
 
         static void Main(InvocationContext invocationContext, string[] args = null)
         {
+            ReposSettings reposSettings;
             GithubSettings githubSetting;
 
             var services = new ServiceCollection();
+            services.AddSingleton(reposSettings = GetReposSettings());
             services.AddSingleton(githubSetting = GetGitHubSettings());
             services.AddRefitClient<IGithubClient>()
                 .ConfigureHttpClient(github => github.BaseAddress = new Uri(githubSetting.Api));
@@ -47,8 +48,18 @@ namespace Compoentes.Clean
             var projects = githubService.GetAllProjects();
 
             var root = new RootCommand();
-            root.AddCommand(NewProject(projects));
+            root.AddCommand(NewProject(reposSettings, githubSetting, projects));
             root.Invoke(args);
+        }
+
+        private static ReposSettings GetReposSettings()
+        {
+            var repos = ConfigurationManager.GetSection("repos") as NameValueCollection;
+
+            return new ReposSettings
+            {
+                Dir = repos.Get("dir")
+            };
         }
 
         private static GithubSettings GetGitHubSettings()
@@ -63,13 +74,13 @@ namespace Compoentes.Clean
             };
         }
 
-        private static Command NewProject(IEnumerable<GithubProject> projects)
+        private static Command NewProject(ReposSettings reposSettings, GithubSettings githubSettings, IEnumerable<GithubProject> projects)
         {
             var cmd = new Command("new", "Create new template of componentes basic DDD layers");
 
             foreach (var project in projects)
             {
-                var repoCommand = new Command(project.Name, $"Create new project from template {project.Name}");
+                var repoCommand = new Command(project.name, $"Create new project from template { project.name }");
                 repoCommand.AddOption(new Option(new[] { "--name", "-n" }, "Name Solution")
                 {
                     Argument = new Argument<string>
@@ -91,7 +102,7 @@ namespace Compoentes.Clean
                         return;
                     }
 
-                    CreateProject(name, project.Url);
+                    CreateProject(reposSettings, project, name);
                 });
 
                 cmd.AddCommand(repoCommand);
@@ -105,7 +116,7 @@ namespace Compoentes.Clean
                 WriteConsole("Usage: new [template]");
                 NewLineConsole();
 
-                table.AddColumn(template => template.Name, "Template");
+                table.AddColumn(template => template.name, "Template");
 
                 var screen = new ScreenView(ConsoleRenderer, InvocationContext.Console) { Child = table };
                 screen.Render();
@@ -113,20 +124,35 @@ namespace Compoentes.Clean
                 WriteConsole("----");
                 NewLineConsole();
                 WriteConsole("Examples:");
-                WriteConsole($"ConsoleApp1 new { projects.First().Name } --name NameYourSolution");
+                WriteConsole($"ConsoleApp1 new { projects.First().name } --name NameYourSolution");
             });
 
             return cmd;
         }
 
-        private static void CreateProject(string name, string url)
+        private static void CreateProject(ReposSettings reposSettings, GithubProject githubProject, string name)
         {
             using (var powershell = PowerShell.Create())
             {
+                powershell.AddScript($"cd { reposSettings.Dir }");
                 powershell.AddScript($"mkdir { name }");
                 powershell.AddScript($"cd { name }");
-                powershell.AddScript($"git clone { url }");
-                var results = powershell.Invoke();
+                powershell.AddScript($"git clone { githubProject.clone_url }");
+                powershell.AddScript("start .");
+
+                foreach (PSObject o in powershell.Invoke())
+                {
+                    WriteConsole($"{ o }");
+                }
+
+                PSDataCollection<ErrorRecord> errors = powershell.Streams.Error;
+                if (errors != null && errors.Count > 0)
+                {
+                    foreach (ErrorRecord err in errors)
+                    {
+                        WriteConsole($"    error: { err }");
+                    }
+                }
             }
 
             WriteConsole($"Create { name } successfully created!");

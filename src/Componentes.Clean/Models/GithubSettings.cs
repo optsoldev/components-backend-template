@@ -1,6 +1,6 @@
 ﻿using Refit;
 
-namespace Components.Clean.Models
+namespace Optsol.Models
 {
     public class GithubSettings
     {

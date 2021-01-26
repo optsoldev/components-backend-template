@@ -1,9 +1,9 @@
-﻿using Components.Clean.Models;
+﻿using Optsol.Models;
 using Refit;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Components.Clean.Clientes
+namespace Optsol.Clientes
 {
     public interface IGithubClient
     {

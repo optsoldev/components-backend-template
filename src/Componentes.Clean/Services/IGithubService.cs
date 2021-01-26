@@ -1,7 +1,7 @@
-﻿using Components.Clean.Models;
+﻿using Optsol.Models;
 using System.Collections.Generic;
 
-namespace Components.Clean.Services
+namespace Optsol.Services
 {
     public interface IGithubService
     {
